@@ -75,10 +75,10 @@ def load_train_data(args):
     images = images * mask + mask
 
     orig_imgs, perturbed_imgs, mask = tf.train.shuffle_batch([orig_images, images, masks],
-																			  batch_size=args.batch_size,
-																			  capacity=args.batch_size*2,
-																			  min_after_dequeue=args.batch_size
-																			 )
+                                                                 batch_size=args.batch_size,
+								 capacity=args.batch_size*2,
+								 min_after_dequeue=args.batch_size
+								 )
     return orig_imgs, perturbed_imgs, mask, data_count, mask_count
 
 
@@ -103,9 +103,9 @@ def load_test_data(args):
     images += mask
 
     orig_imgs, mask, test_imgs = tf.train.batch([orig_images, mask, images],
-												batch_size=args.batch_size,
-												capacity=args.batch_size,
-											    )
+						batch_size=args.batch_size,
+						capacity=args.batch_size,
+						)
 
 
     return orig_imgs, test_imgs, mask, data_count
