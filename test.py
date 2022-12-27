@@ -102,89 +102,60 @@ def test(args, sess, model):
     ckpt_name = str(last_ckpt)
     print ("Loaded model file from " + ckpt_name)   
 
-    '''
-    img = cv2.imread('./test//test.jpg')
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    test_img, mask, region_grow = erase_img(args, img)   
-    print(mask.shape)
-    cv2.imwrite('./mask3.jpg',mask[0]*255)'''
     
     times = 0
     time_count = 0
     
-    
-    
-    for i in range(4):
-        if i == 0:            
-            test_path = './test_mask//mask.jpg'
-            result = './result//recon//'
-        elif i == 1:
-            
-            test_path = './test_mask//mask1.jpg'
-            result = './result//recon1//'
-        elif i == 2:
-            
-            test_path = './test_mask//mask2.jpg'
-            result = './result//recon2//'
-        elif i == 3:
-            
-            test_path = './test_mask//mask6.jpg'
-            result = './result//recon3//'
-        elif i == 4:
-            
-            test_path = './test_mask//mask4.jpg'
-            result = './result//recon4//'
-        elif i == 5:
-            
-            test_path = './test_mask//mask5.jpg'
-            result = './result//recon5//'
-        
-        for root, dirs, files in os.walk('./data//PL//'):
-            for j in range(len(files)):
-                result_path = result + files[j]
-                files[j] = root + files[j]
-        
-                img = cv2.imread(files[j])
-                img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-            
-                orig_test = cv2.resize(img, (test_size, test_size))/127.5 - 1
-                #orig_test = cv2.resize(img, (256, 256))/127.5 - 1
-                orig_test = np.tile(orig_test[np.newaxis,...],[args.batch_size,1,1,1])
-                orig_test = orig_test.astype(np.float32)
-                orig_w, orig_h = img.shape[0], img.shape[1]
-        
-                t0 = time.time()
-                
-                test_img, mask = some_image(args, test_path, orig_test[0])
-                mask = mask * 0 + 1
-                test_img = test_img.astype(np.float32)
-                #region_grow = region_grow.astype(np.float32)
-                
-                print ("Testing situation ",i,"picture ",j)
-                res_img = sess.run(model.test_g_imgs, feed_dict={model.single_orig:orig_test,
-                                                                   model.single_test:test_img,
-                                                                   model.single_mask:mask})
-                
-                t1 = time.time()
-                times += t1 - t0
-                time_count += 1
 
-                orig = cv2.resize((orig_test[0]+1)/2, (int(orig_h/2), int(orig_w/2)))
-                test = cv2.resize((test_img[0]+1)/2, (int(orig_h/2), int(orig_w/2)))
-                recon = cv2.resize((res_img[0]+1)/2, (128, 128))
-                generate = cv2.resize((res_img[0]+1)/2, (int(orig_h/4), int(orig_w/4)))
-            
+    image_path = './data//PL//'
+    test_path = './test_mask//mask.jpg'
+    result = './result//'
 
-                res = cv2.cvtColor(recon, cv2.COLOR_BGR2RGB)
-                generate = cv2.cvtColor(generate, cv2.COLOR_BGR2RGB)
-                pretur_image = cv2.cvtColor(test_img[0], cv2.COLOR_BGR2RGB)
-                
-                cv2.imwrite(result_path,res*255)
+    for root, dirs, files in os.walk(image_path):
+        for j in range(len(files)):
+            result_path = result + files[j]
+            files[j] = root + files[j]
+
+            img = cv2.imread(files[j])
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+            orig_test = cv2.resize(img, (test_size, test_size))/127.5 - 1
+            #orig_test = cv2.resize(img, (256, 256))/127.5 - 1
+            orig_test = np.tile(orig_test[np.newaxis,...],[args.batch_size,1,1,1])
+            orig_test = orig_test.astype(np.float32)
+            orig_w, orig_h = img.shape[0], img.shape[1]
+
+            t0 = time.time()
+
+            test_img, mask = some_image(args, test_path, orig_test[0])
+            mask = mask * 0 + 1
+            test_img = test_img.astype(np.float32)
+            #region_grow = region_grow.astype(np.float32)
+
+            print ("Testing situation ",i,"picture ",j)
+            res_img = sess.run(model.test_g_imgs, feed_dict={model.single_orig:orig_test,
+                                                               model.single_test:test_img,
+                                                               model.single_mask:mask})
+
+            t1 = time.time()
+            times += t1 - t0
+            time_count += 1
+
+            orig = cv2.resize((orig_test[0]+1)/2, (int(orig_h/2), int(orig_w/2)))
+            test = cv2.resize((test_img[0]+1)/2, (int(orig_h/2), int(orig_w/2)))
+            recon = cv2.resize((res_img[0]+1)/2, (128, 128))
+            generate = cv2.resize((res_img[0]+1)/2, (int(orig_h/4), int(orig_w/4)))
+
+
+            res = cv2.cvtColor(recon, cv2.COLOR_BGR2RGB)
+            generate = cv2.cvtColor(generate, cv2.COLOR_BGR2RGB)
+            pretur_image = cv2.cvtColor(test_img[0], cv2.COLOR_BGR2RGB)
+
+            cv2.imwrite(result_path,res*255)
 
     print(times/time_count)
     print("Done.")
-
-
+    
 def main(args):
     run_config = tf.ConfigProto()
     run_config.gpu_options.allow_growth = True
