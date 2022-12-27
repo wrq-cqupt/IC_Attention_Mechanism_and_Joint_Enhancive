@@ -47,7 +47,7 @@ To start test
 ```
 $ python test.py
 ```
-where image_path is the path of the test images, test_path is the mask and result is the save-path of results.
+where 'image_path' is the path of the test images, 'test_path' is the mask and 'result' is the save-path of results.
 
 ### Acknowledgement
 
