@@ -48,9 +48,6 @@ To start test
 $ python test.py
 ```
 
-## Notes
-
-For the moment, we only upload the framework in network.py, neural network layers in architecture.py, parameter setting in config.py and other files. When this paper is accepted and published, we will uploaded the complete code including train.py and test.py.
 
 ### Acknowledgement
 
